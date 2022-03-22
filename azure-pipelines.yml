@@ -15,3 +15,22 @@ variables:
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
+
+- task: AzureKeyVault@2
+  inputs:
+    azureSubscription: 'Azure subscription PAYG (02ae221e-4012-4822-a181-9e7c8f87f703)'
+    KeyVaultName: 'kvtest-0111'
+    SecretsFilter: '*'
+    RunAsPreJob: false
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'run'
+    projects: '**/*.csproj'
+  env:
+    mySecret: $(secretDemo)
